@@ -1,5 +1,6 @@
 import React from "react";
 import { useParams } from "react-router-dom";
+import Avatar from "../Avatar/Avatar";
 
 function User() {
 
@@ -7,6 +8,7 @@ function User() {
     return(
         <div>
             User !!! {userId}
+            <Avatar avatarId={0}/>
         </div>
     )
 }
