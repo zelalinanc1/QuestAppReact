@@ -48,11 +48,12 @@ function Home() {
     return (
       
         <div style={divstyle} >
-          <PostForm  
-              userId={1}
-              userName={"sszsd"}
+          {localStorage.getItem("currentUser") == null? "" : <PostForm  
+              userId={localStorage.getItem("currentUser")}
+              userName={localStorage.getItem("userName")}
               refreshPosts = {refreshPosts}
-               />
+               />}
+         
           {postList.map((post) => (
            
             <Post
