@@ -7,7 +7,7 @@ import {
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import Button from "@mui/material/Button";
-
+import { PostWithAuth } from "../../services/HttpService";
 const linkStyle = {
   textDecoration: "none",
   boxShadow: "none",
@@ -22,23 +22,14 @@ const comment = {
 };
 
 function CommentForm(props) {
-  const { userId, userName,postId } = props;
+  const { userId, userName,postId,setCommentRefresh } = props;
   const [text, setText] = useState("");
 
   const saveComment = () => {
-    fetch("/comments",{
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization":  localStorage.getItem("tokenKey"),
-
-
-      },
-      body: JSON.stringify({
-        postId: postId,
-        userId : userId,
-        text : text,
-      }),
+    PostWithAuth("/comments",{
+      postId: postId,
+      userId : userId,
+      text : text,
     })
     .then((res) =>res.json())
     .catch((err) =>console.log("error"))
@@ -49,6 +40,7 @@ function CommentForm(props) {
   const handleSubmit = () =>{
     saveComment();
     setText("");
+    setCommentRefresh();
   }
 
   const handleChange = (value) =>{

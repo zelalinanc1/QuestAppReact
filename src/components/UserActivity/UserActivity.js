@@ -19,7 +19,7 @@ import Typography from "@mui/material/Typography";
 import CloseIcon from "@mui/icons-material/Close";
 import Slide from "@mui/material/Slide";
 import Post from "../Post/Post";
-
+import { GetWithAuth } from "../../services/HttpService";
 function createData(name, calories, fat, carbs, protein) {
   return { name, calories, fat, carbs, protein };
 }
@@ -34,13 +34,7 @@ function PopUp(props) {
   const [post, setPost] = useState(null);
 
   const getPost = () => {
-    fetch("/posts/" + postId, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: localStorage.getItem("tokenKey"),
-      },
-    })
+    GetWithAuth("/posts/" + postId)
       .then((res) => res.json())
       .then(
         (result) => {
@@ -125,13 +119,7 @@ function UserActivity(props) {
 
 
   const getActivity = () => {
-    fetch("/users/activity/" + userId, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: localStorage.getItem("tokenKey"),
-      },
-    })
+    GetWithAuth("/users/activity/" + userId)
       .then((res) => res.json())
       .then(
         (result) => {

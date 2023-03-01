@@ -20,7 +20,8 @@ import clsx from 'clsx';
 import { Class } from "@mui/icons-material";
 import Comment from "../Comment/Comment";
 import CommentForm from "../Comment/CommentForm";
-
+import { PostWithAuth } from "../../services/HttpService";
+import { DeleteWithAuth } from "../../services/HttpService";
 const ExpandMore = styled((props) => {
     const { expand, ...other } = props;
     return <IconButton {...other} />;
@@ -50,7 +51,15 @@ function Post(props) {
   const isInitialMount = useRef(true);
   const [likeCount,setLikeCount] = useState(likes.length);
   const [likeId,setLikeId] = useState(null);
+  const [refresh, setRefresh] = useState(false);
   let disabled = localStorage.getItem("currentUser") == null ? true:false;
+  
+  const setCommentRefresh = () => {
+
+    setRefresh(true);
+  }
+
+
   const handleExpandClick = () => {
     setExpanded(!expanded);
     refreshComments();
@@ -73,33 +82,17 @@ function Post(props) {
 
   
   const saveLike = () => {
-    fetch("/likes",{
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization":  localStorage.getItem("tokenKey")
-
-      },
-      body: JSON.stringify({
-        postId: postId,
-        userId : localStorage.getItem("currentUser"),
-        
-      }),
+    PostWithAuth("/likes",{
+      postId: postId,
+      userId : localStorage.getItem("currentUser"),
+      
     })
     .then((res) =>res.json())
     .catch((err) =>console.log("error"))
   }
 
   const deleteLike = () => {
-    fetch("/likes/"+ likeId,{
-      method: "DELETE",
-      headers: {
-        "Authorization":  localStorage.getItem("tokenKey")
-
-      },
-      
-    })
-    
+    DeleteWithAuth("/likes/"+ likeId)
     .catch((err) =>console.log("error"))
   }
 
@@ -125,6 +118,8 @@ function Post(props) {
           setError(error);
         }
       )
+
+      setRefresh(false);
   };
 
   
@@ -133,7 +128,7 @@ function Post(props) {
       isInitialMount.current = false;
     else
       refreshComments();
-  }, [commentList]);
+  }, [refresh]);
 
   useEffect(() => {checkLikes()
    
@@ -194,10 +189,10 @@ function Post(props) {
         <Container fixed className="container">
           {error? "error" :
           isLoaded? commentList.map(comment => (
-            <Comment userId={1} userName = {"user1"} text = {comment.text}/>
+            <Comment userId={comment.userId} userName = {comment.userName} text = {comment.text}/>
           )) : "Loading"}
              {disabled? "" : 
-          <CommentForm userId={1} userName = {"user1"} postId = {postId}></CommentForm>}
+          <CommentForm userId={localStorage.getItem("currentUser")} userName = {localStorage.getItem("userName")} postId = {postId} setCommentRefresh={setCommentRefresh}></CommentForm>}
         </Container>
       </Collapse>
     </Card>

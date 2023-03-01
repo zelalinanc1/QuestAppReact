@@ -9,7 +9,7 @@ import {
 import React, { useState,useEffect } from "react";
 import { render } from "react-dom";
 import { Form, useNavigate,Field } from "react-router-dom";
-
+import { PostWithoutAuth } from "../../services/HttpService";
 
 function Auth() {
   const navigate = useNavigate();
@@ -26,15 +26,9 @@ function Auth() {
   };
 
   const sendRequest = (path) => {
-    fetch("/auth/" + path, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        userName: username,
-        password: password,
-      }),
+    PostWithoutAuth("/auth/" + path,{
+      userName: username,
+      password: password,
     })
       .then((res) => res.json())
       .then((result) => {
@@ -51,7 +45,7 @@ function Auth() {
     setUsername("");
     setPassword("");
     navigate("/");
-    //navigate(0);
+    
   }
 
 
