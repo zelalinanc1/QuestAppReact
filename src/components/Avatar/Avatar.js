@@ -35,6 +35,23 @@ function Avatar(props) {
     const [selectedValue, setSelectedValue] = useState(avatarId);
    
 
+    
+    const saveAvatar = (path) => {
+      fetch("/users/" + localStorage.getItem("currentUser"), {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          avatar: selectedValue,
+        }),
+      })
+        .then((res) => res.json())
+        .catch((err) => console.log(err));
+    };
+  
+
+
     const handleChange = (event) => {
         setSelectedValue(event.target.value);
       };
@@ -45,12 +62,13 @@ function Avatar(props) {
     
       const handleClose = () => {
         setOpen(false);
+        saveAvatar();
        
       };
 
   return (
     <div>
-      <Card sx={{ maxWidth: 345, margin: 50 }}>
+      <Card sx={{ maxWidth: 345 }}>
         <CardMedia component="img" alt="User Avatar" image={`/avatars/avatar${selectedValue}.png`} />
       
         <CardContent>
