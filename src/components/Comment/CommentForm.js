@@ -5,9 +5,9 @@ import {
   OutlinedInput,
   Avatar,
 } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
 import Button from "@mui/material/Button";
-import { PostWithAuth } from "../../services/HttpService";
+import { PostWithAuth,RefreshToken  } from "../../services/HttpService";
 const linkStyle = {
   textDecoration: "none",
   boxShadow: "none",
@@ -25,15 +25,52 @@ function CommentForm(props) {
   const { userId, userName,postId,setCommentRefresh } = props;
   const [text, setText] = useState("");
 
+  const navigate = useNavigate();
+
+  const logout = () => {
+    localStorage.removeItem("tokenKey")
+    localStorage.removeItem("currentUser")
+    localStorage.removeItem("refreshKey")
+    localStorage.removeItem("userName")
+    navigate(0); 
+    
+  }
+   
   const saveComment = () => {
     PostWithAuth("/comments",{
-      postId: postId,
-      userId : userId,
-      text : text,
+        postId: postId, 
+        userId : userId,
+        text : text,
+      })
+      .then((res) => {
+        if(!res.ok) {
+            RefreshToken()
+            .then((res) => { if(!res.ok) {
+                logout();
+            } else {
+               return res.json()
+            }})
+            .then((result) => {
+                console.log(result)
+
+                if(result != undefined){
+                    localStorage.setItem("tokenKey",result.accessToken);
+                    saveComment();
+                    setCommentRefresh();
+                }})
+            .catch((err) => {
+                console.log(err)
+            })
+        } else 
+        res.json()
     })
-    .then((res) =>res.json())
-    .catch((err) =>console.log("error"))
-  }
+      .catch((err) => {
+        console.log(err)
+      })
+}
+    
+    
+ 
 
 
 
@@ -84,6 +121,6 @@ function CommentForm(props) {
       ></OutlinedInput>
     </CardContent>
   );
-}
 
+      }
 export default CommentForm;

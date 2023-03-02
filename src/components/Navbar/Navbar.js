@@ -23,9 +23,10 @@ function Navbar() {
   const onClick = () => {
     localStorage.removeItem("tokenKey")
     localStorage.removeItem("currentUser")
+    localStorage.removeItem("refreshKey")
     localStorage.removeItem("userName")
     navigate(0); 
-    //
+    
   }
    
 
@@ -50,8 +51,7 @@ function Navbar() {
              <div><IconButton style={linkStyle} onClick = {onClick}><LockOpen></LockOpen></IconButton>
             <Link  style={linkStyle} to={{pathname : '/users/' + localStorage.getItem("currentUser")}}>Profile</Link>
             </div>}
-          
-          {/* <Link to ={{pathname : '/users/' + userId}} style={linkStyle}>Profile</Link> */}
+    
           </Typography>
         </Toolbar>
       </AppBar>
